@@ -8,7 +8,7 @@ import java.util.List;
 public class HechoIndexadoEvent {
     private String hechoId;
     private String nombre;
-    private String descripcionHecho;
+    private String descripcion;
     private String contenidoPdis;
     private List<String> tags;
     private String estado;
@@ -31,12 +31,12 @@ public class HechoIndexadoEvent {
         this.nombre = nombre;
     }
 
-    public String getDescripcionHecho() {
-        return descripcionHecho;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescripcionHecho(String descripcionHecho) {
-        this.descripcionHecho = descripcionHecho;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getContenidoPdis() {

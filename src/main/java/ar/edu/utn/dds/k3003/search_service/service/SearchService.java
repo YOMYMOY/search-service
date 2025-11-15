@@ -30,9 +30,9 @@ public class SearchService {
         this.hechoRepository = hechoRepository;
     }
 
-    public Page<HechoDTO> buscarHechos(String palabraClave, String tag, Pageable pageable) {
+    public Page<HechoDTO> buscarHechos(String palabra, List<String> tags, Pageable pageable) {
         //Para buscar la palabra clave en lo que tenía @TextIndexed, criterio de búsqueda
-        TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(palabraClave);
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(palabra);
         //Query en orden de relevancia
         Query query = TextQuery.queryText(textCriteria)
                 .sortByScore()
@@ -40,8 +40,10 @@ public class SearchService {
 
         query.addCriteria(Criteria.where("estado").ne("borrado"));
 
-        if (tag != null && !tag.isBlank()) {
-            query.addCriteria(Criteria.where("etiquetas").is(tag.toLowerCase()));
+        if (tags != null && !tags.isEmpty()) {
+            query.addCriteria(Criteria.where("tags")
+                    .all(tags.stream().map(String::toLowerCase)
+                            .collect(Collectors.toList())));
         }
         //Ejecutar la búsqueda y contar el total
         long total = mongoTemplate.count(query, HechoIndexado.class);
@@ -71,7 +73,7 @@ public class SearchService {
 
         doc.setHechoId(event.getHechoId());
         doc.setNombre(event.getNombre());
-        doc.setDescripcion(event.getDescripcionHecho());
+        doc.setDescripcion(event.getDescripcion());
         doc.setContenidoPdis(event.getContenidoPdis());
         doc.setTags(event.getTags());
         doc.setEstado(event.getEstado());

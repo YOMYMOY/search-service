@@ -25,12 +25,12 @@ public class SearchController {
     @GetMapping
     public ResponseEntity<Page<HechoDTO>> buscar(
             @RequestParam("palabra") String palabra,
-            @RequestParam(value = "tag", required = false) String tag,
+            @RequestParam(value = "tags", required = false) List<String> tags,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<HechoDTO> resultados = searchService.buscarHechos(palabra, tag, pageable);
+        Page<HechoDTO> resultados = searchService.buscarHechos(palabra, tags, pageable);
 
         return ResponseEntity.ok(resultados);
     }
