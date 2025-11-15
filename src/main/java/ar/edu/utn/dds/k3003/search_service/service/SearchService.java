@@ -106,6 +106,14 @@ public class SearchService {
         return hechoRepository.save(doc);
     }
 
+    public HechoIndexado actualizarEstado(String hechoId, String nuevoEstado) {
+        HechoIndexado doc = hechoRepository.findByHechoId(hechoId)
+                .orElseThrow(() -> new RuntimeException("Hecho no encontrado."));
+
+        doc.setEstado(nuevoEstado);
+        return hechoRepository.save(doc);
+    }
+
     private HechoDTO toDTO(HechoIndexado doc) {
         return new HechoDTO(
                 doc.getHechoId(),

@@ -1,8 +1,10 @@
 package ar.edu.utn.dds.k3003.search_service.controller;
 
+import ar.edu.utn.dds.k3003.search_service.dto.EstadoUpdateEvent;
 import ar.edu.utn.dds.k3003.search_service.dto.HechoDTO;
 import ar.edu.utn.dds.k3003.search_service.dto.HechoIndexadoEvent;
 import ar.edu.utn.dds.k3003.search_service.dto.PdiIndexadoEvent;
+import ar.edu.utn.dds.k3003.search_service.model.HechoIndexado;
 import ar.edu.utn.dds.k3003.search_service.service.SearchService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,4 +65,14 @@ public class SearchController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PatchMapping("/{hechoId}/estado")
+    public ResponseEntity<HechoIndexado> actualizarEstado(
+            @PathVariable String hechoId,
+            @RequestBody EstadoUpdateEvent event
+            ) {
+        HechoIndexado doc = searchService.actualizarEstado(hechoId, event.getEstado());
+        return ResponseEntity.ok(doc);
+    }
+
 }
