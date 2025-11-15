@@ -29,7 +29,7 @@ public class SearchController {
             @RequestParam("palabra") String palabra,
             @RequestParam(value = "tags", required = false) List<String> tags,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "2") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<HechoDTO> resultados = searchService.buscarHechos(palabra, tags, pageable);
