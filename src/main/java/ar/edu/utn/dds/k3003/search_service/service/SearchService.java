@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.TextQuery;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,14 +44,14 @@ public class SearchService {
             query.addCriteria(Criteria.where("tags").all(tags.stream().map(String::toLowerCase).collect(Collectors.toList())));
         }
 
-        long total = mongoTemplate.count(query, HechoIndexado.class);
+        //long total = mongoTemplate.count(query, HechoIndexado.class);
         List<HechoIndexado> resultados = mongoTemplate.find(query, HechoIndexado.class);
 
         List<HechoDTO> dtos = resultados.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
-
-        return new PageImpl<>(dtos, pageable, total);
+        return PageableExecutionUtils.getPage(dtos, pageable, () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), HechoIndexado.class));
+        //return new PageImpl<>(dtos, pageable, total);
     }
 
     public List<String> getTagsUnicos() {
