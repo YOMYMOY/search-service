@@ -32,7 +32,7 @@ public class SearchService {
 
     public Page<HechoDTO> buscarHechos(String palabra, List<String> tags, Pageable pageable) {
         //Para buscar la palabra clave en lo que tenía @TextIndexed, criterio de búsqueda
-        TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(palabra);
+        TextCriteria textCriteria = TextCriteria.forLanguage("spanish").matching(palabra);
         //Query en orden de relevancia
         Query query = TextQuery.queryText(textCriteria)
                 .sortByScore()
