@@ -47,7 +47,12 @@ public class SearchService {
         //long total = mongoTemplate.count(query, HechoIndexado.class);
         List<HechoIndexado> resultados = mongoTemplate.find(query, HechoIndexado.class);
 
-        List<HechoDTO> dtos = resultados.stream()
+        Set<String> nombresUnicos = new HashSet<>();
+        List<HechoIndexado> resultadosSinDuplicados = resultados.stream()
+            .filter(h -> nombresUnicos.add(h.getNombre()))
+            .collect(Collectors.toList());
+
+        List<HechoDTO> dtos = resultadosSinDuplicados.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
         return PageableExecutionUtils.getPage(dtos, pageable, () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), HechoIndexado.class));
