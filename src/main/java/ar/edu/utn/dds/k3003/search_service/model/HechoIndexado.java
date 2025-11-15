@@ -10,9 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Document(collection = "hechos_indexados")
 public class HechoIndexado {
     @Id
@@ -104,5 +101,20 @@ public class HechoIndexado {
 
     public void setUrlImagenPrincipal(String urlImagenPrincipal) {
         this.urlImagenPrincipal = urlImagenPrincipal;
+    }
+
+    public HechoIndexado(String id, String hechoId, String nombre, String descripcion, String contenidoPdis, List<String> tags, String estado, String coleccion, String urlImagenPrincipal) {
+        this.id = id;
+        this.hechoId = hechoId;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.contenidoPdis = contenidoPdis;
+        this.tags = tags;
+        this.estado = estado;
+        this.coleccion = coleccion;
+        this.urlImagenPrincipal = urlImagenPrincipal;
+    }
+
+    public HechoIndexado() {
     }
 }
