@@ -33,21 +33,31 @@ public class SearchService {
     public Page<HechoDTO> buscarHechos(String palabra, List<String> tags, Pageable pageable) {
         //Para buscar la palabra clave en lo que tenía @TextIndexed, criterio de búsqueda
         TextCriteria textCriteria = TextCriteria.forLanguage("spanish").matching(palabra);
-        //Query en orden de relevancia
-        Query query = TextQuery.queryText(textCriteria)
-                .sortByScore()
-                .with(pageable);
 
-        query.addCriteria(Criteria.where("estado").ne("borrado"));
+        Criteria filterCriteria = Criteria.where("estado").ne("borrado");
 
         if (tags != null && !tags.isEmpty()) {
-            query.addCriteria(Criteria.where("tags")
-                    .all(tags.stream().map(String::toLowerCase)
-                            .collect(Collectors.toList())));
+            filterCriteria = filterCriteria.and("tags").all(
+                    tags.stream().map(String::toLowerCase).collect(Collectors.toList())
+            );
         }
+
+        Query countQuery = new Query();
+        countQuery.addCriteria(textCriteria).addCriteria(filterCriteria);
+
         //Ejecutar la búsqueda y contar el total
-        long total = mongoTemplate.count(query, HechoIndexado.class);
-        List<HechoIndexado> resultados = mongoTemplate.find(query, HechoIndexado.class);
+        long total = mongoTemplate.count(countQuery, HechoIndexado.class);
+
+        if (total == 0) {
+            return new PageImpl<>(List.of(), pageable, 0);
+        }
+
+        Query findQuery = new Query();
+        findQuery.addCriteria(textCriteria).addCriteria(filterCriteria);
+
+        findQuery.with(pageable);
+
+        List<HechoIndexado> resultados = mongoTemplate.find(findQuery, HechoIndexado.class);
 
         List<HechoDTO> dtos = resultados.stream()
                 .map(this::toDTO)
